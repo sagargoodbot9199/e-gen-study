@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Photos - eGn Study Room</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: bold;
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #28a745;
+      border-radius: 8px;
+      box-sizing: border-box;
+      outline: none;
+      font-size: 14px;
+    }
+    .upload-box {
+      border: 2px dashed #28a745;
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+      background-color: #ffffff;
+      cursor: pointer;
+    }
+    .upload-box .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+    .upload-box p {
+      margin: 5px 0;
+      color: #6c757d;
+      font-size: 14px;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .btn-submit {
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Upload Photos</h2>
+
+    <div class="form-group">
+      <label>Select Property / Room</label>
+      <select>
+        <option>Green Valley Hostel - Room 101</option>
+        <option>eGn PG House - Room 202</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Room Photos</label>
+      <label for="photo-upload" class="upload-box">
+        <div class="icon">📸</div>
+        <p><b>Tap to Select Photos</b></p>
+        <p style="font-size: 12px;">(PNG, JPG up to 5MB)</p>
+      </label>
+      <input type="file" id="photo-upload" accept="image/*" multiple>
+    </div>
+
+    <!-- बटन दबाने पर फोटो सेव होने का मैसेज आएगा और वापस डैशबोर्ड खुलेगा -->
+    <button class="btn-submit" onclick="alert('Photos Uploaded Successfully!'); location.href='Dashboard.html'">Upload Photos</button>
+  </div>
+
+</body>
+</html>
