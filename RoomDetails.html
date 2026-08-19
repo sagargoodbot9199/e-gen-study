@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Details - eGn Study Room</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .header {
+      background: #fff;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .back-btn {
+      font-size: 22px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .image-banner {
+      width: 100%;
+      height: 200px;
+      background-color: #28a745;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+    }
+    .title-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+    .room-name {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .location {
+      color: #6c757d;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .price-tag {
+      font-size: 18px;
+      color: #28a745;
+      font-weight: bold;
+    }
+    .card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .card-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-size: 14px;
+      color: #555;
+    }
+    .btn-contact {
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="back-btn" onclick="location.href='StudentDashboard.html'">←</span>
+    <div class="header-title">Room Details</div>
+  </div>
+
+  <div class="image-banner">
+    📸 Room Photos
+  </div>
+
+  <div class="container">
+    <div class="title-price">
+      <div>
+        <div class="room-name">Green Valley Hostel</div>
+        <div class="location">📍 Boring Road, Patna</div>
+      </div>
+      <div class="price-tag">₹5,000/mo</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Room Features</div>
+      <div class="features-grid">
+        <div>🛏️ Single Bed</div>
+        <div>📶 Free Wi-Fi</div>
+        <div>❄️ AC Available</div>
+        <div>🍲 Mess Facility</div>
+        <div>🧹 Daily Cleaning</div>
+        <div>🔒 24x7 Security</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Owner Information</div>
+      <div style="font-size: 14px; color: #555; line-height: 1.6;">
+        <b>Owner:</b> Rahul Kumar<br>
+        <b>Contact:</b> +91 98765 43210
+      </div>
+    </div>
+
+    <button class="btn-contact" onclick="alert('Calling Owner...')">📞 Call Owner</button>
+  </div>
+
+</body>
+</html>
