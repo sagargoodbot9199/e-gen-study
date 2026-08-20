@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP - eGn Study Room</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding-top: 40px;
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      color: #6c757d;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .otp-inputs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+    .otp-inputs input {
+      width: 45px;
+      height: 50px;
+      font-size: 20px;
+      text-align: center;
+      border: 1.5px solid #28a745;
+      border-radius: 8px;
+      outline: none;
+    }
+    .resend-text {
+      color: #6c757d;
+      font-size: 13px;
+      margin-bottom: 30px;
+    }
+    .resend-btn {
+      color: #28a745;
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+      display: none;
+    }
+    .btn-primary {
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Verify OTP</h2>
+    <p class="subtitle">Enter the 6-digit OTP sent to<br><b id="user-phone-number">+91 ----------</b></p>
+
+    <div class="otp-inputs" id="otp-container">
+      <input type="tel" maxlength="1" class="otp-field" autofocus>
+      <input type="tel" maxlength="1" class="otp-field">
+      <input type="tel" maxlength="1" class="otp-field">
+      <input type="tel" maxlength="1" class="otp-field">
+      <input type="tel" maxlength="1" class="otp-field">
+      <input type="tel" maxlength="1" class="otp-field">
+    </div>
+
+    <p class="resend-text" id="timer-box">Resend OTP in <b id="timer-count">00:30</b></p>
+    <p class="resend-text"><span class="resend-btn" id="resend-link" onclick="location.reload()">Resend OTP</span></p>
+
+    <button class="btn-primary" id="verify-btn">Verify & Continue</button>
+  </div>
+
+  <!-- Firebase Modules Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedPhone = sessionStorage.getItem('userPhone');
+      if (savedPhone) {
+        document.getElementById('user-phone-number').innerText = savedPhone;
+      }
+      startTimer();
+    });
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCppaJUCRpdu6RLjrRMM3J_rWBvJH8ylk4",
+      authDomain: "egn-study-room.firebaseapp.com",
+      projectId: "egn-study-room",
+      storageBucket: "egn-study-room.firebasestorage.app",
+      messagingSenderId: "1002377857718",
+      appId: "1:1002377857718:web:f15a9ebb5ba8e8e1eff417",
+      measurementId: "G-2LMM1V1E7K"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Live Countdown Timer
+    function startTimer() {
+      let timeLeft = 30;
+      const timerElement = document.getElementById('timer-count');
+      const timerBox = document.getElementById('timer-box');
+      const resendLink = document.getElementById('resend-link');
+
+      const countdown = setInterval(() => {
+        timeLeft--;
+        timerElement.innerText = `00:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          timerBox.style.display = 'none';
+          resendLink.style.display = 'inline';
+        }
+      }, 1000);
+    }
+
+    // Auto-focus inputs logic
+    const inputs = document.querySelectorAll('.otp-field');
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        if (e.target.value.length === 1 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+    });
+
+    // Strict Verification Logic
+    document.getElementById('verify-btn').addEventListener('click', async () => {
+      let otpCode = "";
+      inputs.forEach(input => otpCode += input.value.trim());
+
+      if (otpCode.length !== 6) {
+        alert("कृपया पूरे 6 अंकों का OTP दर्ज करें।");
+        return;
+      }
+
+      if (window.confirmationResult) {
+        try {
+          await window.confirmationResult.confirm(otpCode);
+          alert("OTP सफलतापूर्वक सत्यापित हो गया!");
+          
+          const target = sessionStorage.getItem('targetDashboard') || 'dashboard.html';
+          window.location.href = target.toLowerCase();
+        } catch (error) {
+          alert("गलत OTP! कृपया सही कोड दर्ज करें।");
+        }
+      } else {
+        alert("सेशन समाप्त हो गया है या अमान्य OTP है। कृपया पुनः प्रयास करें।");
+      }
+    });
+  </script>
+
+</body>
+</html>
