@@ -99,5 +99,28 @@
  window.location.href = "welcome.html";
  }, 3000); // 3 सेकंड बाद ऑटोमेटिक दूसरी स्क्रीन खुल जाएगी
 </script>
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCppaJUCRpdu6RLjrRMM3J_rWBvJH8ylk4",
+    authDomain: "egn-study-room.firebaseapp.com",
+    projectId: "egn-study-room",
+    storageBucket: "egn-study-room.firebasestorage.app",
+    messagingSenderId: "1002377857718",
+    appId: "1:1002377857718:web:f15a9ebb5ba8e8e1eff417"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // यदि यूज़र लॉगिन नहीं है तो उसे वापस लॉगिन पेज पर भेजेगा
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+    }
+  });
+</script>
 </body>
 </html>
