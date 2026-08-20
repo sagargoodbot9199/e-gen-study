@@ -6,92 +6,78 @@
  <title>Login - eGn Study Room</title>
  <style>
  body {
- margin: 0;
- padding: 20px;
- font-family: Arial, sans-serif;
- background-color: #ffffff;
- box-sizing: border-box;
+   margin: 0;
+   padding: 20px;
+   font-family: Arial, sans-serif;
+   background-color: #ffffff;
+   box-sizing: border-box;
  }
  .container {
- max-width: 400px;
- margin: 0 auto;
- padding-top: 50px;
- text-align: center;
+   max-width: 400px;
+   margin: 0 auto;
+   padding-top: 60px;
+   text-align: center;
  }
  h2 {
- color: #333;
- font-size: 28px;
- margin-bottom: 8px;
+   color: #333;
+   font-size: 28px;
+   margin-bottom: 8px;
  }
  p.subtitle {
- color: #6c757d;
- font-size: 14px;
- margin-bottom: 40px;
+   color: #6c757d;
+   font-size: 14px;
+   margin-bottom: 40px;
  }
- .input-group {
- display: flex;
- align-items: center;
- border: 1.5px solid #28a745;
- border-radius: 10px;
- padding: 12px 15px;
- margin-bottom: 20px;
+ .btn-google {
+   width: 100%;
+   background-color: #ffffff;
+   color: #757575;
+   border: 1.5px solid #dadce0;
+   padding: 12px;
+   border-radius: 10px;
+   font-size: 16px;
+   font-weight: bold;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 10px;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
  }
- .country-code {
- font-weight: bold;
- color: #333;
- margin-right: 10px;
- font-size: 16px;
+ .btn-google:hover {
+   background-color: #f8f9fa;
+   border-color: #d2e3fc;
  }
- input[type="tel"] {
- border: none;
- outline: none;
- width: 100%;
- font-size: 16px;
- color: #333;
- }
- .btn-primary {
- width: 100%;
- background-color: #28a745;
- color: white;
- border: none;
- padding: 14px;
- border-radius: 10px;
- font-size: 16px;
- font-weight: bold;
- cursor: pointer;
+ .btn-google img {
+   width: 22px;
+   height: 22px;
  }
  .error-msg {
- color: red;
- font-size: 13px;
- margin-top: -10px;
- margin-bottom: 15px;
- text-align: left;
- display: none;
+   color: red;
+   font-size: 13px;
+   margin-top: 15px;
+   display: none;
  }
  </style>
 </head>
 <body>
 
  <div class="container">
- <h2>Login</h2>
- <p class="subtitle">Enter your mobile number to continue</p>
+   <h2>Login</h2>
+   <p class="subtitle">Sign in to continue to eGn Study Room</p>
 
- <div class="input-group">
- <span class="country-code">+91</span>
- <input type="tel" id="mobileNumber" placeholder="9876543210" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
- </div>
- <div id="error" class="error-msg">कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।</div>
+   <button class="btn-google" id="google-login-btn">
+     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+     Continue with Google
+   </button>
 
- <!-- Hidden ReCAPTCHA Container -->
- <div id="recaptcha-container"></div>
-
- <button class="btn-primary" id="send-otp-btn">Send OTP</button>
+   <div id="error" class="error-msg"></div>
  </div>
 
  <!-- Firebase Modules Integration -->
  <script type="module">
    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-   import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+   import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
    const firebaseConfig = {
      apiKey: "AIzaSyCppaJUCRpdu6RLjrRMM3J_rWBvJH8ylk4",
@@ -105,57 +91,27 @@
 
    const app = initializeApp(firebaseConfig);
    const auth = getAuth(app);
+   const provider = new GoogleAuthProvider();
 
-   function setupRecaptcha() {
-     if (!window.recaptchaVerifier) {
-       window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-         'size': 'invisible',
-         'callback': (response) => {}
-       });
-     }
-   }
-
-   document.getElementById('send-otp-btn').addEventListener('click', async () => {
-     const phoneInput = document.getElementById('mobileNumber').value.trim();
+   document.getElementById('google-login-btn').addEventListener('click', async () => {
      const errorElement = document.getElementById('error');
-     const sendBtn = document.getElementById('send-otp-btn');
-
-     const phonePattern = /^[6-9]\d{9}$/;
-     if (!phonePattern.test(phoneInput)) {
-       errorElement.style.display = 'block';
-       errorElement.innerText = 'कृपया वैध 10 अंकों का मोबाइल नंबर दर्ज करें।';
-       return;
-     }
-
      errorElement.style.display = 'none';
-     sendBtn.disabled = true;
-     sendBtn.innerText = "Sending OTP...";
-
-     const fullPhoneNumber = "+91" + phoneInput;
-     sessionStorage.setItem('userPhone', fullPhoneNumber);
 
      try {
-       setupRecaptcha();
-       const appVerifier = window.recaptchaVerifier;
+       const result = await signInWithPopup(auth, provider);
+       const user = result.user;
        
-       const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, appVerifier);
-       window.confirmationResult = confirmationResult;
-       
-       // OTP सफलता से भेजने के बाद ही अगले पेज पर जाएगा
-       window.location.href = 'otp.html';
-     } catch (error) {
-       console.error("Firebase Error:", error);
-       sendBtn.disabled = false;
-       sendBtn.innerText = "Send OTP";
-       
-       errorElement.style.display = 'block';
-       errorElement.innerText = 'OTP भेजने में विफल: ' + error.message;
+       // यूजर की जानकारी Session Storage में सेव होगी
+       sessionStorage.setItem('userName', user.displayName);
+       sessionStorage.setItem('userEmail', user.email);
+       sessionStorage.setItem('userPhoto', user.photoURL);
 
-       // reCAPTCHA को रीसेट करें ताकि यूजर दोबारा कोशिश कर सके
-       if (window.recaptchaVerifier) {
-         window.recaptchaVerifier.clear();
-         window.recaptchaVerifier = null;
-       }
+       // सफलता से लॉगिन होने पर होम/डैशबोर्ड पेज पर डायरेक्ट रिडायरेक्ट
+       window.location.href = 'index.html'; 
+     } catch (error) {
+       console.error("Google Auth Error:", error);
+       errorElement.style.display = 'block';
+       errorElement.innerText = 'लॉगिन में समस्या आई: ' + error.message;
      }
    });
  </script>
