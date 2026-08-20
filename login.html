@@ -106,7 +106,6 @@
    const app = initializeApp(firebaseConfig);
    const auth = getAuth(app);
 
-   // Function to setup Recaptcha safely
    function setupRecaptcha() {
      if (!window.recaptchaVerifier) {
        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -116,11 +115,10 @@
      }
    }
 
-   setupRecaptcha();
-
    document.getElementById('send-otp-btn').addEventListener('click', async () => {
      const phoneInput = document.getElementById('mobileNumber').value.trim();
      const errorElement = document.getElementById('error');
+     const sendBtn = document.getElementById('send-otp-btn');
 
      const phonePattern = /^[6-9]\d{9}$/;
      if (!phonePattern.test(phoneInput)) {
@@ -130,6 +128,9 @@
      }
 
      errorElement.style.display = 'none';
+     sendBtn.disabled = true;
+     sendBtn.innerText = "Sending OTP...";
+
      const fullPhoneNumber = "+91" + phoneInput;
      sessionStorage.setItem('userPhone', fullPhoneNumber);
 
@@ -140,16 +141,24 @@
        const confirmationResult = await signInWithPhoneNumber(auth, fullPhoneNumber, appVerifier);
        window.confirmationResult = confirmationResult;
        
-       // Smooth Redirect to OTP Page (small letters)
+       // OTP सफलता से भेजने के बाद ही अगले पेज पर जाएगा
        window.location.href = 'otp.html';
      } catch (error) {
-       console.error("Firebase Internal Error Bypass:", error);
-       // Internal error / domain restriction hone par bhi OTP Page par smooth navigate karega
-       window.location.href = 'otp.html';
+       console.error("Firebase Error:", error);
+       sendBtn.disabled = false;
+       sendBtn.innerText = "Send OTP";
+       
+       errorElement.style.display = 'block';
+       errorElement.innerText = 'OTP भेजने में विफल: ' + error.message;
+
+       // reCAPTCHA को रीसेट करें ताकि यूजर दोबारा कोशिश कर सके
+       if (window.recaptchaVerifier) {
+         window.recaptchaVerifier.clear();
+         window.recaptchaVerifier = null;
+       }
      }
    });
  </script>
 
 </body>
-   </html>
-   
+</html>
