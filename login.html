@@ -101,16 +101,18 @@
        const result = await signInWithPopup(auth, provider);
        const user = result.user;
        
+       // डेटा सेव करना
        sessionStorage.setItem('userName', user.displayName);
        sessionStorage.setItem('userEmail', user.email);
        sessionStorage.setItem('userPhoto', user.photoURL);
 
-       // यहाँ बदलाव किया गया है: अब index.html की जगह अंदर वाले मुख्य पेज पर भेजा जा रहा है
-       window.location.href = 'home.html'; 
+       // सबसे जरूरी बदलाव: अब यह सीधे dashboard.html पर भेजेगा
+       window.location.href = 'dashboard.html'; 
+       
      } catch (error) {
        console.error("Google Auth Error:", error);
        errorElement.style.display = 'block';
-       errorElement.innerText = 'लॉगिन में समस्या आई: ' + error.message;
+       errorElement.innerText = 'लॉगिन में समस्या आई, कृपया फिर से प्रयास करें.';
      }
    });
  </script>
