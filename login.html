@@ -101,13 +101,12 @@
        const result = await signInWithPopup(auth, provider);
        const user = result.user;
        
-       // यूजर की जानकारी Session Storage में सेव होगी
        sessionStorage.setItem('userName', user.displayName);
        sessionStorage.setItem('userEmail', user.email);
        sessionStorage.setItem('userPhoto', user.photoURL);
 
-       // सफलता से लॉगिन होने पर होम/डैशबोर्ड पेज पर डायरेक्ट रिडायरेक्ट
-       window.location.href = 'index.html'; 
+       // यहाँ बदलाव किया गया है: अब index.html की जगह अंदर वाले मुख्य पेज पर भेजा जा रहा है
+       window.location.href = 'home.html'; 
      } catch (error) {
        console.error("Google Auth Error:", error);
        errorElement.style.display = 'block';
