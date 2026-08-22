@@ -101,13 +101,20 @@
        const result = await signInWithPopup(auth, provider);
        const user = result.user;
        
-       // डेटा सेव करना
        sessionStorage.setItem('userName', user.displayName);
        sessionStorage.setItem('userEmail', user.email);
        sessionStorage.setItem('userPhoto', user.photoURL);
 
-       // सबसे जरूरी बदलाव: अब यह सीधे dashboard.html पर भेजेगा
-       window.location.href = 'dashboard.html'; 
+       // रोल चेक करके सही पेज पर भेजना
+       const role = sessionStorage.getItem('userRole');
+
+       if (role === 'owner' || role === 'manager') {
+         // अगर Owner/Manager है तो Property ऐड करने वाले पेज पर जाएगा
+         window.location.href = 'add-property.html'; 
+       } else {
+         // अगर Student है तो सीधे Main Dashboard पर जाएगा
+         window.location.href = 'dashboard.html'; 
+       }
        
      } catch (error) {
        console.error("Google Auth Error:", error);
