@@ -25,7 +25,7 @@
     <h2>eGn Study Room</h2>
     <p class="subtitle">Choose your role</p>
 
-    <!-- Student रोल -->
+    <!-- Student Rolle -->
     <div class="card" onclick="selectRole('student')">
       <div class="icon">🎓</div>
       <div class="card-text">
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <!-- Owner रोल -->
+    <!-- Owner Role -->
     <div class="card secondary" onclick="selectRole('owner')">
       <div class="icon">🏠</div>
       <div class="card-text">
@@ -43,7 +43,7 @@
       </div>
     </div>
 
-    <!-- Manager रोल -->
+    <!-- Manager Role -->
     <div class="card secondary" onclick="selectRole('manager')">
       <div class="icon">👔</div>
       <div class="card-text">
@@ -55,9 +55,7 @@
 
 <script>
   function selectRole(role) {
-    // यूज़र का चुना हुआ रोल सेव होगा
     sessionStorage.setItem('userRole', role);
-    // इसके बाद यूजर लॉगिन पेज पर जाएगा
     window.location.href = 'login.html';
   }
 </script>
