@@ -18,15 +18,14 @@
   <h2>कमरे की फोटो अपलोड करें</h2>
 
   <div class="upload-box">
-    <!-- capture="environment" से सीधे कैमरा खुलेगा -->
+    <!-- capture="environment" से डायरेक्ट कैमरा खुलेगा -->
     <input type="file" id="photoInput" accept="image/*" capture="environment" multiple style="display: none;">
-    <button class="btn" onclick="document.getElementById('photoInput').click()">📸 कैमरा खोलें / फोटो चुनें</button>
+    <button class="btn" type="button" onclick="document.getElementById('photoInput').click()">📸 कैमरा खोलें / फोटो चुनें</button>
   </div>
 
-  <!-- फोटो खींचते ही यहाँ दिखेगी -->
   <div id="preview-container"></div>
 
-  <button class="btn" id="uploadBtn" style="background-color: #007bff;">फोटो सेव करें</button>
+  <button class="btn" id="uploadBtn" type="button" style="background-color: #007bff;">फोटो सेव करें</button>
 
   <div id="status"></div>
 
@@ -34,35 +33,38 @@
     const photoInput = document.getElementById('photoInput');
     const previewContainer = document.getElementById('preview-container');
     const status = document.getElementById('status');
-    let selectedFiles = [];
 
-    // 1. कैमरा/गैलरी से फोटो चुनते ही स्क्रीन पर तुरंत दिखाना
-    photoInput.addEventListener('change', (e) => {
-      selectedFiles = Array.from(e.target.files);
+    // 1. फोटो चुनते ही तुरंत प्रिव्यू दिखाएँ
+    photoInput.addEventListener('change', () => {
       previewContainer.innerHTML = '';
+      const files = photoInput.files;
 
-      selectedFiles.forEach(file => {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-        img.classList.add('preview-img');
-        previewContainer.appendChild(img);
-      });
-      status.innerText = `${selectedFiles.length} फोटो चुनी गई!`;
+      if (files.length > 0) {
+        Array.from(files).forEach(file => {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.classList.add('preview-img');
+          previewContainer.appendChild(img);
+        });
+        status.innerText = `${files.length} फोटो चुनी गई!`;
+      }
     });
 
-    // 2. फ्री सर्वर (ImgBB) पर फोटो सुरक्षित अपलोड करना
+    // 2. डायरेक्ट `photoInput.files` से फोटो उठाकर अपलोड करना
     document.getElementById('uploadBtn').addEventListener('click', async () => {
-      if (selectedFiles.length === 0) {
+      const files = photoInput.files;
+
+      if (!files || files.length === 0) {
         alert('कृपया पहले कोई फोटो खींचें या चुनें!');
         return;
       }
 
       status.innerText = 'फोटो अपलोड हो रही है, कृपया प्रतीक्षा करें...';
-      const apiKey = 'd8bc610be4c8bd3ffae542ba2cbf8f54'; // Free API Key
+      const apiKey = 'd8bc610be4c8bd3ffae542ba2cbf8f54';
       const uploadedUrls = [];
 
       try {
-        for (const file of selectedFiles) {
+        for (const file of files) {
           const formData = new FormData();
           formData.append('image', file);
 
@@ -77,9 +79,8 @@
           }
         }
 
-        // फोटो का URL मेमोरी में सेव हो गया
         sessionStorage.setItem('roomPhotos', JSON.stringify(uploadedUrls));
-        status.innerText = '✅ फोटो सफलता से अपलोड और सेव हो गई!';
+        status.innerText = '✅ फोटो सफलतापूर्वक अपलोड और सेव हो गई!';
 
         setTimeout(() => {
           window.location.href = 'roomdetails.html';
