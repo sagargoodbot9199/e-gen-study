@@ -74,7 +74,6 @@
    <div id="error" class="error-msg"></div>
  </div>
 
- <!-- Firebase Modules Integration -->
  <script type="module">
    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -105,15 +104,15 @@
        sessionStorage.setItem('userEmail', user.email);
        sessionStorage.setItem('userPhoto', user.photoURL);
 
-       // रोल चेक करके सही पेज पर भेजना
        const role = sessionStorage.getItem('userRole');
 
-       if (role === 'owner' || role === 'manager') {
-         // अगर Owner/Manager है तो Property ऐड करने वाले पेज पर जाएगा
-         window.location.href = 'add-property.html'; 
-       } else {
-         // अगर Student है तो सीधे Main Dashboard पर जाएगा
+       // आपकी स्क्रीनशॉट वाली असली फ़ाइलों के रास्ते:
+       if (role === 'owner') {
          window.location.href = 'dashboard.html'; 
+       } else if (role === 'manager') {
+         window.location.href = 'managerdashboard.html'; 
+       } else {
+         window.location.href = 'studentdashboard.html'; 
        }
        
      } catch (error) {
