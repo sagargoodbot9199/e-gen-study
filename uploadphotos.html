@@ -1,105 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Photos - eGn Study Room</title>
   <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-    }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    h2 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 25px;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 8px;
-      color: #555;
-      font-weight: bold;
-    }
-    select {
-      width: 100%;
-      padding: 12px;
-      border: 1.5px solid #28a745;
-      border-radius: 8px;
-      box-sizing: border-box;
-      outline: none;
-      font-size: 14px;
-    }
-    .upload-box {
-      border: 2px dashed #28a745;
-      border-radius: 12px;
-      padding: 30px 20px;
-      text-align: center;
-      background-color: #ffffff;
-      cursor: pointer;
-    }
-    .upload-box .icon {
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-    .upload-box p {
-      margin: 5px 0;
-      color: #6c757d;
-      font-size: 14px;
-    }
-    input[type="file"] {
-      display: none;
-    }
-    .btn-submit {
-      width: 100%;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 25px;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; text-align: center; background: #f9f9f9; }
+    .upload-box { border: 2px dashed #28a745; padding: 20px; border-radius: 10px; background: #fff; margin-bottom: 15px; }
+    .btn { background: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
+    #preview-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 15px; }
+    .preview-img { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid #ccc; }
+    #status { margin-top: 15px; font-weight: bold; color: #28a745; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Upload Photos</h2>
+  <h2>कमरे की फोटो अपलोड करें</h2>
 
-    <div class="form-group">
-      <label>Select Property / Room</label>
-      <select>
-        <option>Green Valley Hostel - Room 101</option>
-        <option>eGn PG House - Room 202</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Room Photos</label>
-      <label for="photo-upload" class="upload-box">
-        <div class="icon">📸</div>
-        <p><b>Tap to Select Photos</b></p>
-        <p style="font-size: 12px;">(PNG, JPG up to 5MB)</p>
-      </label>
-      <input type="file" id="photo-upload" accept="image/*" multiple>
-    </div>
-
-    <!-- बटन दबाने पर फोटो सेव होने का मैसेज आएगा और वापस डैशबोर्ड खुलेगा -->
-    <button class="btn-submit" onclick="alert('Photos Uploaded Successfully!'); location.href='dashboard.html'">Upload Photos</button>
+  <div class="upload-box">
+    <!-- capture="environment" से सीधे मोबाइल का कैमरा खुलेगा -->
+    <input type="file" id="photoInput" accept="image/*" capture="environment" multiple style="display: none;">
+    
+    <button class="btn" onclick="document.getElementById('photoInput').click()">📸 कैमरा खोलें / फोटो चुनें</button>
   </div>
+
+  <!-- खींचते ही फोटो यहाँ तुरंत दिखेगी -->
+  <div id="preview-container"></div>
+
+  <button class="btn" id="uploadBtn" style="background-color: #007bff;">Firebase में फोटो सेव करें</button>
+
+  <div id="status"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCppaJUCRpdu6RLjrRMM3J_rWBvJH8ylk4",
+      authDomain: "egn-study-room.firebaseapp.com",
+      projectId: "egn-study-room",
+      storageBucket: "egn-study-room.firebasestorage.app",
+      messagingSenderId: "1002377857718",
+      appId: "1:1002377857718:web:f15a9ebb5ba8e8e1eff417"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+
+    const photoInput = document.getElementById('photoInput');
+    const previewContainer = document.getElementById('preview-container');
+    const status = document.getElementById('status');
+    let selectedFiles = [];
+
+    // 1. फोटो खींचने/चुनने पर तुरंत प्रिव्यू (Preview) दिखाना
+    photoInput.addEventListener('change', (e) => {
+      selectedFiles = Array.from(e.target.files);
+      previewContainer.innerHTML = '';
+
+      selectedFiles.forEach(file => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.classList.add('preview-img');
+        previewContainer.appendChild(img);
+      });
+      status.innerText = `${selectedFiles.length} फोटो चुनी गई!`;
+    });
+
+    // 2. Firebase Storage में असली फोटो अपलोड करना
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+      if (selectedFiles.length === 0) {
+        alert('कृपया पहले कोई फोटो खींचें या चुनें!');
+        return;
+      }
+
+      status.innerText = 'फोटो अपलोड हो रही है, कृपया प्रतीक्षा करें...';
+
+      try {
+        const uploadedUrls = [];
+        for (const file of selectedFiles) {
+          const storageRef = ref(storage, 'room_photos/' + Date.now() + '_' + file.name);
+          await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(storageRef);
+          uploadedUrls.push(downloadURL);
+        }
+
+        // फोटो का लिंक लोकल मेमोरी में सेव कर लें
+        sessionStorage.setItem('roomPhotos', JSON.stringify(uploadedUrls));
+
+        status.innerText = '✅ फोटो सफलतापूर्वक Firebase में सेव हो गई!';
+        
+        // सफलता के बाद रूम डिटेल्स वाले पेज पर भेजें
+        setTimeout(() => {
+          window.location.href = 'roomdetails.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error("Upload Error:", error);
+        status.innerText = '❌ अपलोड फेल हुआ: ' + error.message;
+      }
+    });
+  </script>
 
 </body>
 </html>
